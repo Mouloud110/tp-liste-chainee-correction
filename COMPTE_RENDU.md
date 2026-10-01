@@ -37,3 +37,19 @@ liberee
 | A | Deux fichiers objets sont créés, `main.o` et `liste.o`. Il n'existe pas de `liste.h.o` : un en-tête est inséré par le préprocesseur dans chaque source qui l'inclut, mais n'est pas compilé seul. |
 | B | La commande directe qui reçoit les deux `.c` recompile tout. Les étapes séparées permettent de ne reconstruire que les objets affectés par une modification, puis de refaire rapidement le lien. |
 
+## Exercice 3 — Reconnaître trois erreurs
+
+Les erreurs ont été provoquées dans des copies temporaires, puis les sources
+correctes ont été restaurées.
+
+| Cas | Premier diagnostic utile | Étape |
+| --- | --- | --- |
+| Objet oublié | `undefined reference to 'liste_inserer'` | Édition de liens |
+| En-tête oublié | `main.c:5:5: error: unknown type name 'Maillon'` | Compilation |
+| Garde oubliée | `liste.h:3:16: error: redefinition of 'struct Maillon'` | Compilation |
+
+| Question | Réponse |
+| --- | --- |
+| 1 | Le cas 1 vient de l'éditeur de liens : les appels sont compilés, mais `ld` ne trouve pas leurs définitions puisque `liste.o` manque. Les termes `undefined reference` et `ld returned 1 exit status` le montrent. |
+| 2 | `unknown type name 'Maillon'` est le message utile ; les déclarations implicites suivantes ne sont que des conséquences. |
+| 3 | Le doublon devient possible lorsqu'un même en-tête est atteint par plusieurs chemins, par exemple si deux modules inclus par `main.c` incluent tous les deux `liste.h`. |
