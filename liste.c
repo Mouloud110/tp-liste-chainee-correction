@@ -3,9 +3,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static int blocs = 0;
+
+static void *suivi_malloc(size_t taille)
+{
+    void *adresse = malloc(taille);
+    if (adresse != NULL) blocs++;
+    return adresse;
+}
+
+static void suivi_free(void *adresse)
+{
+    if (adresse != NULL) {
+        blocs--;
+        free(adresse);
+    }
+}
+
+int liste_blocs_en_circulation(void)
+{
+    return blocs;
+}
+
 Maillon *liste_inserer(Maillon *tete, int valeur)
 {
-    Maillon *nouveau = malloc(sizeof *nouveau);
+    Maillon *nouveau = suivi_malloc(sizeof *nouveau);
 
     if (nouveau == NULL) {
         perror("malloc");
@@ -52,7 +74,7 @@ void liste_liberer(Maillon *tete)
 {
     while (tete != NULL) {
         Maillon *suivant = tete->suivant;
-        free(tete);
+        suivi_free(tete);
         tete = suivant;
     }
 }

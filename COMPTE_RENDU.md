@@ -80,3 +80,16 @@ gcc -Wall -Wextra -Werror -std=c11 -g -o demo main.o liste.o
 | --- | --- |
 | A | Avec la bonne dépendance, les deux fichiers qui incluent l'en-tête sont recompilés. Sans elle, `make` considère à tort que `main.o` est encore valide. |
 | B | L'exécutable peut mélanger deux objets compilés avec des définitions différentes de `Maillon`. L'édition de liens peut réussir, mais le comportement du programme devient indéfini. |
+
+## Exercice 6 — Compteur d'allocations
+
+| Mesure | Sans fuite | Avec une seconde liste de 3 éléments oubliée |
+| --- | ---: | ---: |
+| Après création | 5 | 8 |
+| Après libération de la liste principale | 0 | 3 |
+
+| Question | Réponse |
+| --- | --- |
+| A | Le compteur et les deux enveloppes sont des détails du module. `static` leur donne une liaison interne et empêche le reste du programme de les utiliser directement. |
+| B | Incrémenter après un échec de `malloc` compterait un bloc inexistant. Décrémenter pour `NULL` serait également faux puisque `free(NULL)` ne libère aucun bloc. |
+| C | Le compteur donne le nombre de blocs manquants, pas leur origine. Il faut observer sa valeur à plusieurs étapes, simplifier le scénario ou ajouter temporairement des traces aux allocations pour trouver l'opération responsable. |

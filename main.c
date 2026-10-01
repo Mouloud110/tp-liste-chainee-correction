@@ -10,6 +10,7 @@ int main(void)
         liste = liste_inserer(liste, i * 10);
     }
 
+    printf("blocs apres creation : %d\n", liste_blocs_en_circulation());
     printf("liste       : ");
     liste_afficher(liste);
     printf("longueur    : %d\n", liste_longueur(liste));
@@ -17,5 +18,6 @@ int main(void)
 
     liste_liberer(liste);
     puts("liberee");
+    printf("blocs apres liberation : %d\n", liste_blocs_en_circulation());
     return 0;
 }
