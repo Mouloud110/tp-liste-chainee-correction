@@ -68,3 +68,15 @@ gcc -Wall -Wextra -Werror -std=c11 -g -o demo main.o liste.o
 | --- | --- |
 | A | Sans modification, toutes les cibles sont plus récentes que leurs dépendances. La seconde exécution répond donc `make: 'demo' is up to date.` |
 | B | Quatre espaces ne commencent pas une recette : GNU Make 4.4.1 répond `Makefile:2: *** missing separator. Stop.` |
+
+## Exercice 5 — Dépendance à `liste.h`
+
+| Configuration | Reconstruction après modification de `liste.h` |
+| --- | --- |
+| Dépendance correcte | `main.o`, `liste.o`, puis `demo` |
+| `liste.h` oublié pour `main.o` | `liste.o`, puis `demo` seulement |
+
+| Question | Réponse |
+| --- | --- |
+| A | Avec la bonne dépendance, les deux fichiers qui incluent l'en-tête sont recompilés. Sans elle, `make` considère à tort que `main.o` est encore valide. |
+| B | L'exécutable peut mélanger deux objets compilés avec des définitions différentes de `Maillon`. L'édition de liens peut réussir, mais le comportement du programme devient indéfini. |
