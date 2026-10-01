@@ -120,3 +120,20 @@ La pile de la variante fautive remonte de `malloc` vers `suivi_malloc`, puis
 | A | La ligne indiquée est celle de l'allocation devenue inaccessible. L'oubli d'un appel à `liste_liberer` n'a pas de ligne exécutable que l'outil pourrait désigner. |
 | B | Le maillon de tête représente 1 bloc directement perdu. Les 2 suivants ne sont joignables qu'à travers lui et sont donc indirectement perdus. |
 | C | Ici, les nombres sont 5/5 puis 8/5, car la bibliothèque C utilisée n'alloue pas de tampon supplémentaire pour cette sortie. Sur une autre libc, Valgrind peut compter des allocations internes en plus des maillons. |
+
+## Exercice 8 — Dépassement de tableau
+
+| Observation | Résultat |
+| --- | --- |
+| Exécution normale | Affiche `42` et retourne 0 |
+| Exécution instrumentée | `AddressSanitizer: heap-buffer-overflow` et code 1 |
+
+AddressSanitizer indique une écriture de 4 octets immédiatement après une zone
+allouée de 20 octets.
+
+| Question | Réponse |
+| --- | --- |
+| A | Le programme possède un `malloc` et un `free` : le compteur d'allocations resterait équilibré et ne verrait pas le dépassement. |
+| B | Les 20 octets correspondent à 5 entiers de 4 octets. `t[5]` commence exactement après le bloc, donc à 0 octet après sa fin ; `t[6]` commencerait 4 octets plus loin. |
+| C | Une sortie attendue et un code nul ne prouvent pas l'absence de comportement indéfini. Un test qui passe peut ne pas exercer ou révéler l'erreur. |
+| D | Le compteur reste utile comme invariant léger pour le module. Valgrind ou AddressSanitizer est nécessaire pour localiser les fuites et détecter les accès hors limites ou après libération. |
