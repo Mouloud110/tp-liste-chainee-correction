@@ -93,3 +93,30 @@ gcc -Wall -Wextra -Werror -std=c11 -g -o demo main.o liste.o
 | A | Le compteur et les deux enveloppes sont des détails du module. `static` leur donne une liaison interne et empêche le reste du programme de les utiliser directement. |
 | B | Incrémenter après un échec de `malloc` compterait un bloc inexistant. Décrémenter pour `NULL` serait également faux puisque `free(NULL)` ne libère aucun bloc. |
 | C | Le compteur donne le nombre de blocs manquants, pas leur origine. Il faut observer sa valeur à plusieurs étapes, simplifier le scénario ou ajouter temporairement des traces aux allocations pour trouver l'opération responsable. |
+
+## Exercice 7 — Valgrind
+
+Mesures obtenues avec Valgrind 3.25.1 sur un système Linux 64 bits :
+
+| Mesure | Sans fuite | Avec la fuite |
+| --- | ---: | ---: |
+| `definitely lost` | 0 | 16 octets dans 1 bloc |
+| `indirectly lost` | 0 | 32 octets dans 2 blocs |
+| `total heap usage` | 5 allocations, 5 libérations | 8 allocations, 5 libérations |
+| Compteur interne final | 0 | 3 |
+
+Sans fuite, les dernières informations sont :
+
+```text
+All heap blocks were freed -- no leaks are possible
+ERROR SUMMARY: 0 errors from 0 contexts
+```
+
+La pile de la variante fautive remonte de `malloc` vers `suivi_malloc`, puis
+`liste_inserer`, jusqu'à l'appel de `main.c:15` qui construit la seconde liste.
+
+| Question | Réponse |
+| --- | --- |
+| A | La ligne indiquée est celle de l'allocation devenue inaccessible. L'oubli d'un appel à `liste_liberer` n'a pas de ligne exécutable que l'outil pourrait désigner. |
+| B | Le maillon de tête représente 1 bloc directement perdu. Les 2 suivants ne sont joignables qu'à travers lui et sont donc indirectement perdus. |
+| C | Ici, les nombres sont 5/5 puis 8/5, car la bibliothèque C utilisée n'alloue pas de tampon supplémentaire pour cette sortie. Sur une autre libc, Valgrind peut compter des allocations internes en plus des maillons. |
