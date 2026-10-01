@@ -1,0 +1,7 @@
+*.o
+demo
+demo.exe
+deborde
+deborde.exe
+*-asan
+*-asan.exe
