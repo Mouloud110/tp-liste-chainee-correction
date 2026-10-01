@@ -137,3 +137,27 @@ allouée de 20 octets.
 | B | Les 20 octets correspondent à 5 entiers de 4 octets. `t[5]` commence exactement après le bloc, donc à 0 octet après sa fin ; `t[6]` commencerait 4 octets plus loin. |
 | C | Une sortie attendue et un code nul ne prouvent pas l'absence de comportement indéfini. Un test qui passe peut ne pas exercer ou révéler l'erreur. |
 | D | Le compteur reste utile comme invariant léger pour le module. Valgrind ou AddressSanitizer est nécessaire pour localiser les fuites et détecter les accès hors limites ou après libération. |
+
+## Exercice 9 — `liste_maximum`
+
+Sortie finale :
+
+```text
+blocs apres creation : 5
+liste       : 50 -> 40 -> 30 -> 20 -> 10 -> NULL
+longueur    : 5
+contient 30 : oui
+maximum     : 50
+liste vide  : aucun maximum (resultat=12345)
+liberee
+blocs apres liberation : 0
+```
+
+La sentinelle `12345` confirme que le cas vide ne modifie pas `*resultat`.
+La version finale retourne 0 sous AddressSanitizer et Valgrind conclut
+`All heap blocks were freed` avec `ERROR SUMMARY: 0 errors`.
+
+| Question | Réponse |
+| --- | --- |
+| A | `liste.h`, `liste.c` et `main.c` ont été modifiés. Comme les deux objets dépendent de l'en-tête, `make` recompile `main.o` et `liste.o`, puis relie `demo`. |
+| B | `-1` peut être une valeur valide de la liste, éventuellement son maximum. Un booléen distingue sans ambiguïté l'absence de résultat de la valeur calculée. |
