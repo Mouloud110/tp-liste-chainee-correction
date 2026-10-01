@@ -53,3 +53,18 @@ correctes ont été restaurées.
 | 1 | Le cas 1 vient de l'éditeur de liens : les appels sont compilés, mais `ld` ne trouve pas leurs définitions puisque `liste.o` manque. Les termes `undefined reference` et `ld returned 1 exit status` le montrent. |
 | 2 | `unknown type name 'Maillon'` est le message utile ; les déclarations implicites suivantes ne sont que des conséquences. |
 | 3 | Le doublon devient possible lorsqu'un même en-tête est atteint par plusieurs chemins, par exemple si deux modules inclus par `main.c` incluent tous les deux `liste.h`. |
+
+## Exercice 4 — Premier Makefile
+
+Le premier `make` exécute :
+
+```text
+gcc -Wall -Wextra -Werror -std=c11 -g -c main.c
+gcc -Wall -Wextra -Werror -std=c11 -g -c liste.c
+gcc -Wall -Wextra -Werror -std=c11 -g -o demo main.o liste.o
+```
+
+| Question | Réponse |
+| --- | --- |
+| A | Sans modification, toutes les cibles sont plus récentes que leurs dépendances. La seconde exécution répond donc `make: 'demo' is up to date.` |
+| B | Quatre espaces ne commencent pas une recette : GNU Make 4.4.1 répond `Makefile:2: *** missing separator. Stop.` |
